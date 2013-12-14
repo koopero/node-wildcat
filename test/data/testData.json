@@ -1,0 +1,9 @@
+{
+	"rootFiles": [
+		"audio/",
+		"image/",
+		"video/",
+		"emptyFile",
+		"testData.json"
+	]
+}
