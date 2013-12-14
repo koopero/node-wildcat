@@ -3,6 +3,7 @@
 		"audio/",
 		"image/",
 		"video/",
+		"link/",
 		"emptyFile",
 		"testData.json"
 	]

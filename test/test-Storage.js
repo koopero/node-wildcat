@@ -13,54 +13,53 @@ process.chdir ( Test.path() );
 testData = Test.readJSONFile( Test.path( 'data/testData.json' ) );
 
 describe('Filesystem', function() {
-	describe( "Read test data", function () {
-		var storage,
-			testDataJson;
+	describe( "new Storage( './data' )", function () {
+		var storage;
 
-		it('should mount ./data and read a file and a directory', function ( cb ) {
-			async.series( [
-				getStorage,
-				readFile,
-				readDir
-			], cb );
+		before( function ( cb ) {
+			Test.TestDataStorage ( function ( err, testDataStorage ) {
+				storage = testDataStorage;
+				cb( err );
+			});
+		})
 
-			function getStorage ( cb ) {
-				Test.TestDataStorage ( function ( err, testDataStorage ) {
-					storage = testDataStorage;
-					cb( err );
-				});
-			}
+		it('should read data from /testData.json', function ( cb ) {
+			var file = storage.getFile ( '/testData.json' );
+			file.readData( function ( err, data ) {
+				if ( err )
+					throw new Error( "Couldn't readData from ./data/testData.json" );
+				
+				assert.deepEqual( data, testData, "Data read from File doesn't match" );
 
-			function readFile ( cb ) {
-				var file = storage.getFile ( '/testData.json' );
-				file.readData( function ( err, data ) {
-					if ( err )
-						throw new Error( "Couldn't readData from ./data/testData.json" );
-					
-					assert.deepEqual( data, testData, "Data read from File doesn't match" );
+				testDataJson = data;
+				cb();
+			});
+		});
 
-					testDataJson = data;
-					cb();
-				});
-			}
+		it('should read a directory', function ( cb ) {
+			var dir = storage.getFile ( '/' );
+			dir.readdir ( function ( err, listing ) {
+				if ( err )
+					throw err;
 
-			function readDir ( cb ) {
-				var dir = storage.getFile ( '/' );
-				dir.readdir ( function ( err, listing ) {
-					if ( err )
-						throw err;
+				var intersect = _.intersection( listing, testData.rootFiles );
+				if ( 
+					intersect.length != listing.length 
+					|| testData.rootFiles.length != intersect.length 
+				)
+					throw new Error( "Directory listing of ./data/ doesn't match ./data/testData.json" );
 
-					var intersect = _.intersection( listing, testDataJson.rootFiles );
-					if ( 
-						intersect.length != listing.length 
-						|| testDataJson.rootFiles.length != intersect.length 
-					)
-						throw new Error( "Directory listing of ./data/ doesn't match ./data/testData.json" );
+				cb();
+			});
+		});
 
-
-					cb();
-				});
-			}
+		it('should read an internal link', function ( cb ) {
+			var link = storage.getFile ( '/link/toGif' );
+			link.getInfo( function ( err ) {
+				assert( link.isLink, "Link is not a link");
+				assert.equal ( link.linkPath, '/image/gif' );
+				cb();
+			});
 		});
 
 		after( function ( cb ) {
@@ -68,18 +67,58 @@ describe('Filesystem', function() {
 		});
 	});
 
-	describe( "Work with temporary", function () {
+	describe( "new Storage( 'tmp:/' )", function () {
 		var storage,
 			storagePath;
 
+		it( "should mount", function ( cb ) {
+			var tempPath = 'tmp:'+Test.path( 'scratch/'+'Filesystem-test' );
+			storage = new Wildcat.Storage( tempPath );
+			storage.init( function ( err ) {
+				if ( err ) throw err;
+
+				var storagePath = storage.localPath;
+				assert( Test.isDir( storagePath ), "Directory doesn't exist" );
+				assert( Test.startsWith( storagePath, Test.path()), "Directory in wrong place" );
+				cb();
+			});	
+		});
+
+		it('should clone from testData', function ( cb ) {
+			Test.TestDataStorage ( function ( err, testDataStorage ) {
+				if ( err ) throw err;
+				var iterator = storage.clone( testDataStorage, {}, cb );
+			});
+		});
+
+		it('should read data from a file', function ( cb ) {
+			var file = storage.getFile ( '/testData.json' );
+			file.readData( function ( err, data ) {
+				if ( err )
+					throw new Error( "Couldn't readData from ./data/testData.json" );
+				
+				assert.deepEqual( data, testData, "Data read from File doesn't match" );
+
+				testDataJson = data;
+				cb();
+			});
+		});
+
+		it('should have properly cloned a link', function ( cb ) {
+			var link = storage.getFile ( '/link/toGif' );
+			link.getInfo( function ( err ) {
+				assert( link.isLink, "Link is not a link");
+				assert.equal ( link.linkPath, '/image/gif' );
+				cb();
+			});
+		});
+
+		/*
 		it('should mount ./scratch/[TMP], clone from ./data, read and write', function ( cb ) {
 			async.series( [
 				createTempStorage,
 				cloneFromTestData
 			], cb );
-
-
-
 
 			function createTempStorage ( cb ) {
 				assert( process.cwd() == Test.path(), "cwd is not wildcat/test" );
@@ -105,8 +144,9 @@ describe('Filesystem', function() {
 			}
 
 		});
+		*/
 
-		/*
+
 		after( function ( cb ) {
 			storage.close( function ( err ) { 
 				if ( err ) throw err;
@@ -115,7 +155,7 @@ describe('Filesystem', function() {
 				cb();
 			});
 		});
-		*/
+
 	});
 
 
