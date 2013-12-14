@@ -4,6 +4,8 @@
 		"image/",
 		"video/",
 		"link/",
+		"meta/",
+		"text/",
 		"emptyFile",
 		"testData.json"
 	]

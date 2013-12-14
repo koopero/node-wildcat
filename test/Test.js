@@ -43,7 +43,7 @@ exports.httpGet = function ( options, cb ) {
 			data += chunk;
 		});
 		res.on('end', function () {
-			cb( null, res.headers, data );
+			cb( null, res.statusCode, res.headers, data );
 		})
 	} );
 
@@ -52,9 +52,20 @@ exports.httpGet = function ( options, cb ) {
 	});
 
 	req.end();
-
-
 }
+
+exports.sameList = function ( a, b ) {
+	if ( a.length != b.length )
+		return false;
+
+	var i = 0, k = a.length;
+	for ( ; i < k; i ++ )
+		if ( a.indexOf( b[i] ) == -1 || b.indexOf( a[i] ) == -1 )
+			return false;
+
+	return true;
+}
+
 
 exports.startsWith = function ( haystack, needle ) {
 	return haystack.substr( 0, needle.length) == needle;

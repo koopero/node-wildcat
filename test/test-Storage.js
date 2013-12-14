@@ -42,13 +42,7 @@ describe('Filesystem', function() {
 				if ( err )
 					throw err;
 
-				var intersect = _.intersection( listing, testData.rootFiles );
-				if ( 
-					intersect.length != listing.length 
-					|| testData.rootFiles.length != intersect.length 
-				)
-					throw new Error( "Directory listing of ./data/ doesn't match ./data/testData.json" );
-
+				assert( Test.sameList( listing, testData.rootFiles ), "Directory listing of ./data/ doesn't match ./data/testData.json" );
 				cb();
 			});
 		});
