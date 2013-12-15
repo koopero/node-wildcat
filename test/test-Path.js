@@ -16,4 +16,10 @@ describe('Path', function() {
 			'dir/foo.json'
 		);
 	})
+
+	it('should match', function () {
+		assert( Path('/meta/**/*.meta.json').match( '/meta/file.jpg.meta.json' ) );
+		assert( Path('/meta/**/*.meta.json').match( '/meta/dir/file.jpg.meta.json' ) );
+			
+	});
 });

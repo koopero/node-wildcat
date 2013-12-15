@@ -24,7 +24,7 @@ describe('Filesystem', function() {
 		})
 
 		it('should read data from /testData.json', function ( cb ) {
-			var file = storage.getFile ( '/testData.json' );
+			var file = storage.file ( '/testData.json' );
 			file.readData( function ( err, data ) {
 				if ( err )
 					throw new Error( "Couldn't readData from ./data/testData.json" );
@@ -36,8 +36,18 @@ describe('Filesystem', function() {
 			});
 		});
 
+		it('should read a path mismatch', function ( cb ) {
+			var file = storage.file ('/testData.json/');
+			file.getInfo( function ( err ) {
+				if ( err ) throw err;
+				assert( String(file.path) == '/testData.json', "Trailing slash not stripped" );
+				assert( file.isFile, "File not found under wrong path" );
+				cb();
+			});
+		});
+
 		it('should read a directory', function ( cb ) {
-			var dir = storage.getFile ( '/' );
+			var dir = storage.file ( '/' );
 			dir.readdir ( function ( err, listing ) {
 				if ( err )
 					throw err;
@@ -48,7 +58,7 @@ describe('Filesystem', function() {
 		});
 
 		it('should read an internal link', function ( cb ) {
-			var link = storage.getFile ( '/link/toGif' );
+			var link = storage.file ( '/link/toGif' );
 			link.getInfo( function ( err ) {
 				assert( link.isLink, "Link is not a link");
 				assert.equal ( link.linkPath, '/image/gif' );
@@ -86,7 +96,7 @@ describe('Filesystem', function() {
 		});
 
 		it('should read data from a file', function ( cb ) {
-			var file = storage.getFile ( '/testData.json' );
+			var file = storage.file ( '/testData.json' );
 			file.readData( function ( err, data ) {
 				if ( err )
 					throw new Error( "Couldn't readData from ./data/testData.json" );
@@ -99,7 +109,7 @@ describe('Filesystem', function() {
 		});
 
 		it('should have properly cloned a link', function ( cb ) {
-			var link = storage.getFile ( '/link/toGif' );
+			var link = storage.file ( '/link/toGif' );
 			link.getInfo( function ( err ) {
 				assert( link.isLink, "Link is not a link");
 				assert.equal ( link.linkPath, '/image/gif' );
@@ -159,7 +169,7 @@ describe('Filesystem', function() {
 	/*
 	it('should load a file from test data', function ( cb ) {
 		console.log( "Doing data test")
-		var descriptionFile = testData.getFile ( '/testData.json' );
+		var descriptionFile = testData.file ( '/testData.json' );
 		descriptionFile.readData( function ( err, data ) {
 			if ( err ) throw new Error( "Error loading ./data/testData.json");
 			cb();

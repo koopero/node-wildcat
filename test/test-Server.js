@@ -67,11 +67,28 @@ describe( "Server", function () {
 		
 	});
 
-	if('serves a 404', function ( cb ) {
+	it('serves a 404', function ( cb ) {
 		Test.httpGet( server.url('Does/Not/Exist'), function ( err, status, headers, content ) {
 			assert( status == 404, "Wrong status code" );
+			cb();
 		});
 	});
+
+	it('serves 301 from a directory to a file', function ( cb ) {
+		Test.httpGet( server.url('emptyFile/'), function ( err, status, headers, content ) {
+			assert( status == 301, "Wrong status code" );
+			assert( headers['location'] == server.url('emptyFile'), "Wrong location" );
+			cb();
+		})
+	})
+
+	it('serves 301 from a file to a directory', function ( cb ) {
+		Test.httpGet( server.url('video'), function ( err, status, headers, content ) {
+			assert( status == 301, "Wrong status code" );
+			assert( headers['location'] == server.url('video/'), "Wrong location" );
+			cb();
+		})
+	})
 
 	it('should serve a linked file as a redirect', function ( cb ) {
 		Test.httpGet( server.url('link/toGif'), function ( err, status, headers, content ) {
