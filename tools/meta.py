@@ -308,7 +308,9 @@ except :
 #	FF Mutha Fuckin' Mpeg
 #
 
-if ret['type'] in ( 'audio', 'video' ) or ret['mimeType'] == 'application/ogg' :
+#if ret['type'] in ( 'audio', 'video' ) or ret['mimeType'] == 'application/ogg' :
+if True :
+
 	ffout = subprocess.check_output (
 		'ffprobe %s' % ( inEscaped ),
 		stderr=subprocess.STDOUT,

@@ -1,5 +1,6 @@
 var 
 	assert  = require('assert'),
+	express = require('express'),
 	Test 	= require('./Test.js'),
 	Wildcat = require('../lib/Wildcat.js'),
 	async	= require('async');
@@ -14,9 +15,20 @@ testData = Test.readJSONFile( Test.path( 'data/testData.json' ) );
 describe( "Server", function () {
 	var router,
 		storage,
-		server;
+		server,
+		outsideServer;
 
-	it( "is added to a new Router", function( cb ) {
+	/*
+	before( function ( cb ) {
+		// Start a shitty little express server
+		outsideServer = express();
+		outsizeServer.get('/redirectToWildcat', function ( req, res ) {
+			res.redirect( )
+		})
+	});
+	*/
+
+	it( "is added to a new Router and initialized", function( cb ) {
 		Test.CloneTestDataStorage( "test-Server", function ( err, clonedStorage ) {
 			storage = clonedStorage;
 			var routerConfig = {
