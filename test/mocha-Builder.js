@@ -19,6 +19,8 @@ describe( "Builder", function () {
 	});
 
 	it('will convert an image convert using ImageMagick', function ( cb ) {
+		this.timeout(5000);
+
 		var gif = scratch.file( '/image/gif' ),
 			toPBM = scratch.file( '/converted/toPBM');
 
@@ -56,6 +58,8 @@ describe( "Builder", function () {
 	});
 
 	it('will convert an audio file using ffmpeg', function ( cb ) {
+		this.timeout(5000);
+		
 		var wav = scratch.file( '/audio/silence.wav' ),
 			toFlac = scratch.file( '/converted/toFlac');
 

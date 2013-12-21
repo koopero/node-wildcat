@@ -1,7 +1,7 @@
 {
   "name": "wildcat",
   "description": "Media transmutation and sharing server",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "homepage": "https://github.com/koopero/node-wildcat",
   "author": {
     "name": "koopero",

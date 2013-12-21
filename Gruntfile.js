@@ -22,7 +22,12 @@ module.exports = function(grunt) {
 		].join(''),
 
 		tests : [
-			'test/Path-test.js',
+			'test/mocha-Path.js',
+			'test/mocha-Utils.js',
+			'test/mocha-Storage.js',
+			'test/mocha-Server.js',
+			'test/mocha-HTTP.js',
+			'test/mocha-Builder.js'
 		],
 
 		pkg : pkg,
@@ -34,7 +39,6 @@ module.exports = function(grunt) {
 		pkg : config.pkg,
 		simplemocha: {
 			options: {
-				globals: ['should'],
 				timeout: 3000,
 				ignoreLeaks: false,
 				ui: 'bdd'

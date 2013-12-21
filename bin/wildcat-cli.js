@@ -1,6 +1,9 @@
 #!/bin/sh
 ':' //; exec "`command -v nodejs || command -v node`" "$0" "$@"
-// Credit to dancek (http://unix.stackexchange.com/a/65295) for the wicked shebang!
+// Credit to dancek (http://unix.stackexchange.com/a/65295) for shebang!
+
+var _ = require('underscore');
+
 
 var argv = require('optimist')
 	.usage('Usage: $0')
@@ -11,10 +14,36 @@ var argv = require('optimist')
 	.argv;
 
 
+var validCommands = ['init','serve','build','mirror'];
+
+
+var commands = [];
+var args = [];
+
+argv._.forEach ( function ( arg ) {
+	if ( validCommands.indexOf ( arg ) != -1 ) {
+		commands.push( arg );
+	} else {
+		args.push( arg );
+	}
+});
 
 
 
-var Wildcat = require('../lib/Wildcat.js');
+
+
+var Wildcat = require('../lib/Wildcat.js'),
+	HTTP = require('../lib/Storage/HTTP.js');
+
+
+function loadConfig( url, cb ) {
+	if ( !url ) {
+		url = '.';
+	}
+
+
+}
+
 
 
 var config = {
@@ -38,6 +67,10 @@ config.storage = {
 
 }
 
+
+
+
+console.log( argv );
 
 
 command = argv._[0];
@@ -74,9 +107,12 @@ if ( argv.watch ) {
 
 
 
+
+
+
 var router = new Wildcat.Router( config );
 router.init( function ( err ) {
-	console.log( router.publicConfig() );
+	
 
 	router.touchAll();
 
@@ -103,6 +139,6 @@ process.on( 'SIGINT', function() {
   
   // some other closing procedures go here
   	process.exit( 1 );
-})
+});
 
 
