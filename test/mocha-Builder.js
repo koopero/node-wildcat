@@ -18,6 +18,21 @@ describe( "Builder", function () {
 		});
 	});
 
+	it('will capture the output of a shell command', function ( cb ){
+		var context = Context({
+			stdout: true
+		});
+
+		var builder = Builder({
+			shell: [ { tool: 'pwd'} ]
+		});
+
+		builder.execute( context, function ( err, result ) {
+			assert.equal( context.stdout.trim(), process.cwd() );
+			cb();
+		});
+	});
+
 	it('will convert an image convert using ImageMagick', function ( cb ) {
 		this.timeout(5000);
 

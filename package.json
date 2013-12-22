@@ -16,7 +16,7 @@
   },
   "bin": {
     "wildcat": "bin/wildcat-cli.js",
-    "wildcat-meta": "tools/meta.py"
+    "wildcat-meta": "bin/meta.js"
   },
   "main": "lib/Wildcat.js",
   "keywords": [],

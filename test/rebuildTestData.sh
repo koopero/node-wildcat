@@ -41,7 +41,13 @@ cd ..
 mkdir text
 cd text
 echo "foobar" > foobar
+cd ..
 
+
+mkdir json
+cd json
+echo '{"bool":true,"number":4.0,"string":"foobar","null":null}' > test.json
+cd ..
 
 
 cd ..

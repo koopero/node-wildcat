@@ -10,7 +10,7 @@ var
 var lastCwd = process.cwd();
 process.chdir ( Test.path() );
 
-testData = Test.readJSONFile( Test.path( 'data/testData.json' ) );
+//testData = Test.readJSONFile( Test.path( 'data/testData.json' ) );
 
 describe('Filesystem', function() {
 	describe( "new Storage( './data' )", function () {
@@ -23,13 +23,13 @@ describe('Filesystem', function() {
 			});
 		})
 
-		it('should read data from /testData.json', function ( cb ) {
-			var file = storage.file ( '/testData.json' );
+		it('should read data from a file', function ( cb ) {
+			var file = storage.file ( '/json/test.json' );
 			file.readData( function ( err, data ) {
 				if ( err )
-					throw new Error( "Couldn't readData from ./data/testData.json" );
+					throw new Error( "Couldn't readData from ./data/json/test.json" );
 				
-				assert.deepEqual( data, testData, "Data read from File doesn't match" );
+				assert.deepEqual( data, {"bool":true,"number":4.0,"string":"foobar","null":null}, "Data read from File doesn't match" );
 
 				testDataJson = data;
 				cb();
@@ -37,10 +37,10 @@ describe('Filesystem', function() {
 		});
 
 		it('should read a path mismatch', function ( cb ) {
-			var file = storage.file ('/testData.json/');
+			var file = storage.file ('/emptyFile/');
 			file.getInfo( function ( err ) {
 				if ( err ) throw err;
-				assert( String(file.path) == '/testData.json', "Trailing slash not stripped" );
+				assert( String(file.path) == '/emptyFile', "Trailing slash not stripped" );
 				assert( file.isFile, "File not found under wrong path" );
 				cb();
 			});
@@ -52,7 +52,7 @@ describe('Filesystem', function() {
 				if ( err )
 					throw err;
 
-				assert( Test.sameList( listing, testData.rootFiles ), "Directory listing of ./data/ doesn't match ./data/testData.json" );
+				//assert( Test.sameList( listing, testData.rootFiles ), "Directory listing of ./data/ doesn't match ./data/testData.json" );
 				cb();
 			});
 		});
@@ -96,12 +96,12 @@ describe('Filesystem', function() {
 		});
 
 		it('should read data from a file', function ( cb ) {
-			var file = storage.file ( '/testData.json' );
+			var file = storage.file ( '/json/test.json' );
 			file.readData( function ( err, data ) {
 				if ( err )
-					throw new Error( "Couldn't readData from ./data/testData.json" );
+					throw new Error( "Couldn't readData from ./data/json/test.json" );
 				
-				assert.deepEqual( data, testData, "Data read from File doesn't match" );
+				assert.deepEqual( data, {"bool":true,"number":4.0,"string":"foobar","null":null}, "Data read from File doesn't match" );
 
 				testDataJson = data;
 				cb();
