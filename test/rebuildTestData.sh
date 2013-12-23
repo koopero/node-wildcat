@@ -44,6 +44,12 @@ echo "foobar" > foobar
 cd ..
 
 
+mkdir video
+cd video
+ffmpeg -y -t 10 -s 1920x1080 -f rawvideo -pix_fmt rgb24 -r 25 -i /dev/zero black.1080.mp4 >/dev/null 2>&1
+cd ..
+
+
 mkdir json
 cd json
 echo '{"bool":true,"number":4.0,"string":"foobar","null":null}' > test.json

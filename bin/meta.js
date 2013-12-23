@@ -11,5 +11,5 @@ var Meta = require('../lib/Meta.js');
 
 var file = argv._[0];
 Meta( file, {}, function ( err, meta ) {
-	console.log(meta);
+	process.stdout.write( JSON.stringify( meta, null, ' ' ) )
 });

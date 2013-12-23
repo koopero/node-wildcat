@@ -83,5 +83,9 @@ describe( 'Utils', function () {
 			assert(  q( bigMp3, isMp3 ) ); 
 			assert(  !q( bigMp3, isVideo ) ); 
 		});
+
+		it('should not squint at undefined values', function () {
+			assert( !q( { }, { "has": "property"} ) );
+		})
 	})
 });
