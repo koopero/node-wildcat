@@ -111,8 +111,8 @@ describe( "Server", function () {
 	});
 
 	it('should serve headers based on meta streams', function ( cb ) {
-		Test.httpGet( server.url('image/gif'), function ( err, status, headers, content ) {
-			assert( Test.startsWith( headers['content-type'], 'image/gif' ), "Wrong mime type for gif" );
+		Test.httpGet( server.url('image/targa'), function ( err, status, headers, content ) {
+			assert( Test.startsWith( headers['content-type'], 'image/x-targa' ), "Wrong mime type for targa ("+headers['content-type']+")" );
 			cb();
 		})
 	});

@@ -41,5 +41,15 @@ describe( "Meta", function () {
 		});
 	});
 
+	it('does meta for a shitty video file', function ( cb ) {
+		Meta( storage.file('/video/black.1080.mp4'), function ( err, meta ) {
+			if ( err ) throw err;
+
+			assert.equal( meta['content-type'], 'video/mp4' );
+			assert.equal( meta['image-width'], 1920 );
+			cb();
+		});
+	});
+
 
 });
