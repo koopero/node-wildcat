@@ -30,8 +30,7 @@ module.exports = function(grunt) {
 			'test/mocha-Builder.js'
 		],
 
-		pkg : pkg,
-		uglifyFiles : {}
+		pkg : pkg
 	};
 
 	// Project configuration.
