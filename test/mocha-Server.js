@@ -29,6 +29,7 @@ describe( "Server", function () {
 					},
 					"meta": {
 						"input": "**/*",
+						"metaFor": "original",
 						"path": "meta/**/*.meta.json"
 					}
 				},

@@ -28,9 +28,11 @@ var commands = {},
 async.series( [
 	parseArguments,
 	loadConfig,
+	alterConfig,
 	listenForKill,
 	changeDir,
 	initRouter,
+	touchFiles,
 	waitForCompletion,
 	shutdown
 ], function ( err ) {
@@ -83,6 +85,17 @@ function loadConfig ( cb ) {
 	} );
 }
 
+function alterConfig ( cb ) {
+	if ( commands.build ) {
+		if ( !config.worker ) {
+			config.worker = {};
+		}
+	}
+
+
+	cb();
+}
+
 function listenForKill ( cb ) {
 	var killed = false;
 	process.on( 'SIGINT', function() {
@@ -100,7 +113,7 @@ function listenForKill ( cb ) {
 
 function changeDir ( cb ) {
 	if ( workDir && workDir != process.cwd() ) {
-		console.log ( "Entering", workDir );
+		//console.log ( "Entering", workDir );
 		lastDir = process.cwd();
 		process.chdir( workDir );
 	}
@@ -108,14 +121,26 @@ function changeDir ( cb ) {
 }
 
 function initRouter ( cb ) {
+	//console.log( JSON.stringify( config, null, ' ' ) );
 	router = new Wildcat.Router( config );
 	router.init( function ( err ) {
 		cb ( err );
 	});
 }
 
+
+function touchFiles ( cb ) {
+	//cb(); return;
+	var storage = router.storage;
+	var iterator = storage.touchAll( cb );
+	iterator.on('output', function ( file ) {
+		console.log("Touched File", file);
+	});
+}
+
+
 function waitForCompletion ( cb ) {
-	setTimeout( cb, 1000 );
+	//setTimeout( cb, 1000 );
 }
 
 
