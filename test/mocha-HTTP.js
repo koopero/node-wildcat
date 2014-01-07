@@ -2,10 +2,12 @@ var
 	assert = require('assert'),
 	express = require('express'),
 	urllib = require('url'),
-	HTTP = require('../lib/Storage/HTTP.js');
+	HTTP = require('../lib/Storage/HTTP.js'),
+	Test = require('./Test.js'),
+	Wildcat = require('../lib/Wildcat.js');
 
 
-describe( "HTTP Client", function () {
+describe( "HTTP", function () {
 
 	var 
 		hostname = require('os').hostname(),
@@ -69,13 +71,122 @@ describe( "HTTP Client", function () {
 		});
 		
 		it('will detect a redirect loop', function ( cb ) {
-			this.timeout( 20000 );
 			HTTP.request( outsideServerUrl+'/redirectLoop', { followRedirect: true }, function ( err, status, headers, content ) {
 				if ( !err ) throw new Error( "Didn't detect redirect loop");
 				cb();
 			} );
 		});
 	});
+
+	describe("Mirror server", function () {
+		var router,
+			server,
+			http;
+
+		before( function( cb ) {
+			Test.CloneTestDataStorage( "server", function ( err, clonedStorage ) {
+				var storage = clonedStorage;
+				var routerConfig = {
+					"storage": storage,
+					"streams": {
+						"original": {
+							"meta": "meta"
+						},
+						"meta": {
+							"input": "**/*",
+							"path": "meta/**/*.meta.json"
+						}
+					},
+					"server": { listen: serverUrl }
+				}
+
+				router = new Wildcat.Router ( routerConfig );
+				router.init( function ( err ) {
+					if ( err ) {
+						cb( err );
+						return;
+					};
+
+					server = router.server;
+					//setTimeout( cb, 1000 );
+					//console.log( 'serverUrl', serverUrl );
+					cb();
+				});
+			});
+		});
+
+
+		it( 'will mount a url', function ( cb ) {
+			http = new HTTP( { 
+				url: serverUrl,
+				localPath: 'tmp:/./scratch/client' 
+			} );
+			http.init( cb );
+		} );
+
+		it( 'will read from /text/foobar', function ( cb ) {
+			var file = http.file('/text/foobar');
+			file.readString( function ( err, data ) {
+				if ( err ) throw err;
+				assert.equal( 'foobar\n', data );
+				cb();
+			});
+		})
+
+		it( 'will write from a string', function ( cb ) {
+			var 
+				data = "barbarfoo",
+				path = '/write/some/text',
+				file = http.file( path );
+
+			file.store( data, function ( err ) {
+				if ( err ) throw err;
+				var written = router.file( path );
+				written.readString( function ( err, str ) {
+					if ( err ) throw err;
+					assert.equal( str, data );
+					cb();
+				} );
+				
+			});
+		});
+
+
+		it( 'will be able to tell if a file is synced', function ( cb ) {
+			var 
+				data = "barbarfoo",
+				path = '/write/some/text',
+				file = http.file( path );
+
+			file.store( data, function ( err ) {
+				if ( err ) throw err;
+				file.getInfo( function ( err, info ) {
+					if ( err ) throw err;
+
+					assert( info.synced );
+					cb();
+				});
+				
+				
+			});
+		})
+
+		it( "will close its temp directory", function ( cb ) {
+			var tempDir = http.localPath;
+			http.close( function ( err ) {
+				if ( err ) throw err;
+
+				assert( !Test.isDir( tempDir  ), "Temporary directory wasn't deleted" );
+				cb();
+			});
+		});
+
+
+		after( function ( cb ) {
+			router.close( cb );
+		});
+	});
+
 
 	after( function () {
 		outsideServer.close();

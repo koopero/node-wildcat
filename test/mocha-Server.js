@@ -18,16 +18,6 @@ describe( "Server", function () {
 		server,
 		outsideServer;
 
-	/*
-	before( function ( cb ) {
-		// Start a shitty little express server
-		outsideServer = express();
-		outsizeServer.get('/redirectToWildcat', function ( req, res ) {
-			res.redirect( )
-		})
-	});
-	*/
-
 	it( "is added to a new Router and initialized", function( cb ) {
 		Test.CloneTestDataStorage( "test-Server", function ( err, clonedStorage ) {
 			storage = clonedStorage;
