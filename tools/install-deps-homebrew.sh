@@ -1,3 +1,3 @@
 #!sh
 
-brew install exiftool
+brew install exiftool ffmpeg python-pil
