@@ -134,7 +134,7 @@ function touchFiles ( cb ) {
 	var storage = router.storage;
 	var iterator = storage.touchAll( cb );
 	iterator.on('output', function ( file ) {
-		console.log("Touched File", file);
+		//rm console.log("Touched File", file);
 	});
 }
 
