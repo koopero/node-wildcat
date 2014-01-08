@@ -22,12 +22,12 @@ module.exports = function(grunt) {
 		].join(''),
 
 		tests : [
-			'test/mocha-Path.js',
-			'test/mocha-Utils.js',
-			'test/mocha-Storage.js',
-			'test/mocha-Server.js',
-			'test/mocha-HTTP.js',
-			'test/mocha-Builder.js'
+			'./test/mocha-Path.js',
+			'./test/mocha-Utils.js',
+			'./test/mocha-Storage.js',
+			'./test/mocha-Server.js',
+			'./test/mocha-HTTP.js',
+			'./test/mocha-Builder.js'
 		],
 
 		pkg : pkg

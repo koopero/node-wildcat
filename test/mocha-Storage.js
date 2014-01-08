@@ -7,12 +7,18 @@ var
 	Test    = require( "./Test.js");
 
 
-var lastCwd = process.cwd();
-process.chdir ( Test.path() );
+
 
 //testData = Test.readJSONFile( Test.path( 'data/testData.json' ) );
 
 describe('Filesystem', function() {
+	var lastCwd;
+
+	before( function() {
+		lastCwd = process.cwd();
+		process.chdir ( Test.path() );
+	});
+	
 	describe( "new Storage( './data' )", function () {
 		var storage;
 
@@ -31,7 +37,7 @@ describe('Filesystem', function() {
 				
 				assert.deepEqual( data, {"bool":true,"number":4.0,"string":"foobar","null":null}, "Data read from File doesn't match" );
 
-				testDataJson = data;
+				var testDataJson = data;
 				cb();
 			});
 		});
@@ -103,7 +109,7 @@ describe('Filesystem', function() {
 				
 				assert.deepEqual( data, {"bool":true,"number":4.0,"string":"foobar","null":null}, "Data read from File doesn't match" );
 
-				testDataJson = data;
+				var testDataJson = data;
 				cb();
 			});
 		});
