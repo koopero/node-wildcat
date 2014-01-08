@@ -56,4 +56,10 @@ echo '{"bool":true,"number":4.0,"string":"foobar","null":null}' > test.json
 cd ..
 
 
+for file in $(find . -not -type d -not -name ".*" -not -wholename './meta/*' | sed 's/^\.\///')
+do
+	mkdir -p `dirname meta/$file.meta.json`
+	wildcat-meta $file > meta/$file.meta.json
+done
+
 cd ..
