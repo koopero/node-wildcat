@@ -1,7 +1,7 @@
 {
   "name": "wildcat",
   "description": "Media transmutation and sharing server",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "homepage": "https://github.com/koopero/node-wildcat",
   "author": {
     "name": "koopero",
@@ -16,7 +16,8 @@
   },
   "bin": {
     "wildcat": "bin/wildcat-cli.js",
-    "wildcat-meta": "bin/meta.js"
+    "wildcat-meta": "bin/meta.js",
+    "wildcat-install": "bin/install.sh"
   },
   "main": "lib/Wildcat.js",
   "keywords": [],
