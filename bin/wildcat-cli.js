@@ -18,7 +18,7 @@ var
 
 
 
-var commands = {},
+var commands,
 	flags = {},
 	url,
 	config,
@@ -53,12 +53,13 @@ function parseArguments ( cb ) {
 		.argv;
 
 
-	var validCommands = ['init','serve','build','mirror'];
+	var validCommands = ['init','server','worker','mirror'];
 	var args = [];
 
 
 	argv._.forEach ( function ( arg ) {
 		if ( validCommands.indexOf ( arg ) != -1 ) {
+			commands = commands || {};
 			commands[ arg ] = true;
 		} else if ( !url) {
 			url = arg;
@@ -86,10 +87,28 @@ function loadConfig ( cb ) {
 }
 
 function alterConfig ( cb ) {
-	if ( commands.build ) {
+	if ( commands && commands.worker ) {
 		if ( !config.worker ) {
 			config.worker = {};
 		}
+	} else if ( commands ) {
+		config.worker = null;
+	}
+
+	if ( commands && commands.server ) {
+		if ( !config.server ) {
+			config.server = {};
+		}
+
+		if ( args.listen ) 
+			config.server.listen = args.listen;
+
+		if ( !config.server.listen ) {
+			config.server.listen = 'http://:32000';
+		}
+
+	} else if ( commands ) {
+		config.server = null;
 	}
 
 
