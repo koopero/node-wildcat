@@ -12,6 +12,7 @@ var _ = require('underscore'),
 
 
 var 
+	extend = require('extend'),
 	Wildcat = require('../lib/Wildcat.js'),
 	HTTP = require('../lib/Storage/HTTP.js');
 
@@ -19,8 +20,8 @@ var
 
 
 var commands,
-	flags = {},
 	url,
+	options = {},
 	config,
 	workDir, lastDir,
 	router;
@@ -68,6 +69,7 @@ function parseArguments ( cb ) {
 			return;
 		}
 	});
+	extend ( options, argv );
 
 	cb();
 }
@@ -100,8 +102,8 @@ function alterConfig ( cb ) {
 			config.server = {};
 		}
 
-		if ( args.listen ) 
-			config.server.listen = args.listen;
+		if ( options.listen ) 
+			config.server.listen = options.listen;
 
 		if ( !config.server.listen ) {
 			config.server.listen = 'http://:32000';
