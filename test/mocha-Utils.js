@@ -29,6 +29,47 @@ describe( 'Utils', function () {
 		});
 	});
 
+
+	describe('#uniquePath', function () {
+		var up = Utils.uniquePath,
+			file = '/dir/base.ext';
+
+		function test ( template, shouldBe, iteration, msg ) {
+			assert.equal( up( file, template ), shouldBe, msg );
+		}
+		it('should do defaults', function () {
+			
+
+			assert.equal( up ( file, "no-code" ), "no-code" );
+			assert.equal( up ( file ), file );
+		});
+
+		it('should do numbers', function () {
+			assert.equal( up ( file, "[#]" ), '' );
+			assert.equal( up ( file, "[#:2]" ), '00' );
+			assert.equal( up ( file, "[#:2]", 3 ), '03' );
+			assert.equal( up ( file, "[#]", 3 ), '3' );
+			assert.equal( up ( file, "[#:1]", 14 ), '4' );
+			assert.equal( up ( file, "[#:4]", 10000 ), '0000' );
+				
+		})
+
+		it('should do parts of the path', function () {
+			test( '[dir]', '/dir/' );
+			test( '[dir][B].foo', '/dir/base.foo' );
+			test( '[base:2][ext:3]', 'ba.ex' );
+		});
+
+		it('should randomize', function () {
+			for ( var i = 0; i < 10000; i ++ ) {
+				assert ( 
+					up( file, "[rand]" ) != up( file, "[rand]" ),
+					'random collision'
+				);
+			}
+		})
+	});
+
 	describe( '#query', function () {
 		var q = Utils.query;
 
@@ -103,4 +144,6 @@ describe( 'Utils', function () {
 			assert( !q( { }, { "has": "property"} ) );
 		})
 	})
+
+
 });
