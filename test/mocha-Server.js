@@ -1,6 +1,7 @@
 var 
 	assert  = require('assert'),
 	express = require('express'),
+	HTTP    = require('../lib/Storage/HTTP.js'),
 	Test 	= require('./Test.js'),
 	Wildcat = require('../lib/Wildcat.js'),
 	async	= require('async');
@@ -15,8 +16,8 @@ var serverUrl = "http://localhost:5555/";
 describe( "Server", function () {
 	var router,
 		storage,
-		server,
-		outsideServer;
+
+		server;
 
 	it( "is added to a new Router and initialized", function( cb ) {
 		Test.CloneTestDataStorage( "test-Server", function ( err, clonedStorage ) {
@@ -115,7 +116,64 @@ describe( "Server", function () {
 			//assert( Test.sameList( listing, testData.rootFiles ) );
 			cb();
 		});
-	})
+	});
+
+	it('should PUT a file', function ( cb ) {
+		var path = '/put/someText',
+			data = 'Some Text Here';
+
+		HTTP.request( 
+			server.url( path ),
+			{ 
+				method: 'PUT', 
+				write: data,
+				headers: {
+					'content-type': 'text/plain'
+				}
+			},
+			onRequestComplete
+		);
+
+		function onRequestComplete ( err, status, header, content ) {
+			assert.equal( status, 201, "Wrong status" );
+
+			var wroteFile = storage.file( path );
+			wroteFile.readString ( function ( err, str ) {
+				if ( err ) throw err;
+				assert.equal( str, data, "Data was written incorrectly" );
+				cb();
+			});
+		}
+	});
+
+	it('should set the mtime for an uploaded file', function ( cb ) {
+		var path = '/put/oldFile',
+			data = 'Some Text Here',
+			date = new Date( 'Jan 01 2010 12:13:00 GMT-0800');
+
+		HTTP.request( 
+			server.url( path ),
+			{ 
+				method: 'PUT', 
+				write: data,
+				headers: {
+					'content-type': 'text/plain',
+					'last-modified': date.toString()
+				}
+			},
+			onRequestComplete
+		);
+
+		function onRequestComplete ( err, status, header, content ) {
+			var wroteFile = storage.file( path );
+			wroteFile.getInfo( function ( err, info ) {
+				if ( err ) throw err;
+				assert.equal( String(info.mtime), String(date) );
+				cb();
+			});
+		}
+	});
+
 
 	after( function ( cb ) {
 		router.close( cb );
