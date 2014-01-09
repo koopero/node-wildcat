@@ -119,7 +119,7 @@ describe( "Server", function () {
 	});
 
 	it('should PUT a file', function ( cb ) {
-		var path = '/put/someText',
+		var path = 'put/someText',
 			data = 'Some Text Here';
 
 		HTTP.request( 
@@ -127,6 +127,7 @@ describe( "Server", function () {
 			{ 
 				method: 'PUT', 
 				write: data,
+				json: true,
 				headers: {
 					'content-type': 'text/plain'
 				}
@@ -135,7 +136,11 @@ describe( "Server", function () {
 		);
 
 		function onRequestComplete ( err, status, header, content ) {
+			if ( err ) throw err;
 			assert.equal( status, 201, "Wrong status" );
+			assert( Array.isArray(content.files), "No files array" );
+			assert.equal( content.files[0].url, serverUrl+path );
+			assert.equal( content.files[0]['size'], data.length, "Size incorrect" );
 
 			var wroteFile = storage.file( path );
 			wroteFile.readString ( function ( err, str ) {
@@ -156,6 +161,7 @@ describe( "Server", function () {
 			{ 
 				method: 'PUT', 
 				write: data,
+				json: true,
 				headers: {
 					'content-type': 'text/plain',
 					'last-modified': date.toString()
@@ -171,6 +177,56 @@ describe( "Server", function () {
 				assert.equal( String(info.mtime), String(date) );
 				cb();
 			});
+		}
+	});
+
+	it('should PUT a symlink', function ( cb ) {
+		var path = '/put/linkToJpeg',
+			src = '/image/jpeg';
+
+		HTTP.request(
+			server.url( path ),
+			{ 
+				method: 'PUT',
+				write: src,
+				headers: {
+					'content-type': 'wildcat/symlink-abspath'
+				}
+			}, onRequestComplete
+		);
+
+		function onRequestComplete( err, status, header, content ) {
+			var wroteFile = storage.file( path );
+			wroteFile.getInfo( function ( err, info ) {
+				assert.equal( info.type, 'link', 'Link not created' );
+				assert.equal( info.linkPath, src, 'Link is wrong path' );
+				cb();
+			});
+		}
+	});
+
+	it('should return a nice error when the symlink target does not exist', function ( cb ) {
+		var path = '/put/linkToNothing',
+			src = '/not/really/a/file';
+
+		HTTP.request(
+			server.url( path ),
+			{ 
+				method: 'PUT',
+				write: src,
+				headers: {
+					'content-type': 'wildcat/symlink-abspath'
+				}
+			}, onRequestComplete
+		);
+
+		function onRequestComplete( err, status, header, content ) {
+			assert.equal( status, 400 );
+			assert.equal( header['content-type'], 'application/json' );
+			content = JSON.parse( content );
+			assert( content.error, "Error not in JSON" );
+			assert.equal( content.error.code, "LinkTargetNotFound" );
+			cb();
 		}
 	});
 
