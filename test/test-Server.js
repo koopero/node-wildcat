@@ -104,9 +104,11 @@ describe( "Server", function () {
 	})
 
 	it('should serve a linked file as a redirect', function ( cb ) {
-		Test.httpGet( server.url('link/toGif'), function ( err, status, headers, content ) {
-			assert( status == 302, "Wrong status code for link" );
-			assert( headers['location'] == server.url('image/gif'), "Wrong location of link" )
+		var linkFrom = 'link/toGif',
+			linkTo = 'image/gif';
+		Test.httpGet( server.url(linkFrom), function ( err, status, headers, content ) {
+			assert( status == 302, "Wrong status code for link ( check test/data/link/toGif, should be symlink )" );
+			assert( headers['location'] == server.url(linkTo), "Wrong location of link" )
 			cb();
 		});
 	});

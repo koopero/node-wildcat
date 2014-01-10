@@ -26,6 +26,7 @@ cd ..
 
 mkdir link
 cd link
+echo "Creating links"
 ln -s ../image/gif toGif
 cd ..
 

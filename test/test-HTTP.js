@@ -50,10 +50,10 @@ describe( "HTTP", function () {
 		});
 
 		outsideServer = outside.listen( outsideServerPort );
-		setTimeout( cb, 100 );
+		setTimeout( cb, 50 );
 	});
 
-	describe( "HTTP.request", function () {
+	describe( "#request()", function () {
 		it('will not follow a redirect by default', function ( cb ) {
 			HTTP.request( outsideServerUrl+'/redirectToFoobar', function ( err, status, headers, content ) {
 				if ( err ) throw err;
@@ -77,6 +77,7 @@ describe( "HTTP", function () {
 			} );
 		});
 	});
+
 
 	describe("Mirror server", function () {
 		var router,
@@ -186,6 +187,7 @@ describe( "HTTP", function () {
 			router.close( cb );
 		});
 	});
+
 
 
 	after( function () {
