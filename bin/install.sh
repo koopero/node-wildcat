@@ -1,2 +1,2 @@
 #!/bin/sh
-`which brew apt-get port` install ffmpeg exiftool imagemagick
+`which brew apt-get port` install curl ffmpeg exiftool imagemagick
