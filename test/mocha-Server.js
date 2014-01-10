@@ -1,8 +1,10 @@
 var 
 	assert  = require('assert'),
 	express = require('express'),
+	Context = require('../lib/Context.js'),
 	HTTP    = require('../lib/Storage/HTTP.js'),
 	Test 	= require('./Test.js'),
+	Shell 	= require('../lib/Command/Shell.js'),
 	Wildcat = require('../lib/Wildcat.js'),
 	async	= require('async');
 
@@ -34,7 +36,14 @@ describe( "Server", function () {
 						"path": "meta/**/*.meta.json"
 					}
 				},
-				"server": true
+				"server": {
+					"post": {
+						"path": {
+							"/upload/multi/*": "/post/[base][#][ext]",
+							"/upload/singleFile": "/post/singleFile"
+						}
+					}
+				}
 			}
 
 			router = new Wildcat.Router ( routerConfig );
@@ -230,6 +239,101 @@ describe( "Server", function () {
 		}
 	});
 
+	
+	it('should POST a file twice', function ( cb ) {
+		var uploadFrom = storage.file( '/image/targa' ),
+			uploadTo = '/upload/multi/',
+			expectPath = '/post/targa',
+			shell = Shell( [
+				{ "tool": "curl" },
+				{ "prefix": "-F file=@", "input": true },
+				{ "escape": server.url( uploadTo ) }
+			] ),
+			context = Context( {
+				inputs: [ uploadFrom ]
+			} );
+
+		uploadTarga( function ( err, result ) {
+			if ( err ) throw err;
+			var output = context.stdout;
+			try {
+				output = JSON.parse( output )
+			} catch ( e ) {
+				console.log( "shell", context.shell );
+				console.log( "out", output );
+				throw new Error( 'Not json from curl' );
+			}
+
+			//console.log( "shell", context.shell );
+			//console.log( "out", output );
+
+			assert( Array.isArray( output.files ), "No files in response" );
+			assert.equal( output.files[0].url, server.url( expectPath ) );
+			var firstUrl = output.files[0].url;
+			
+
+			uploadTarga( function ( err, result ) {
+				if ( err ) throw err;
+
+				var output = context.stdout;
+
+				//console.log( "shell", context.shell );
+				//console.log( "out", output );
+
+				
+				output = JSON.parse( output );
+
+				assert( Array.isArray( output.files ), "No files in second response" );
+				assert.notEqual( output.files[0].url, firstUrl );
+
+				cb();
+			} );
+		} );
+
+		function uploadTarga ( cb ) {
+			shell.execute( context, cb );
+		}
+
+	});
+
+	it('should POST three files at once', function ( cb ) {
+		var 
+			uploadTo = '/upload/multi/foo',
+			context = Context( {
+				inputs: [
+					storage.file( '/text/foobar' ),
+					storage.file( '/json/test.json' ),
+					storage.file( '/emptyFile' )
+				]
+			}),
+			shell = Shell( [
+				{ "tool": "curl" },
+				{ "prefix": "-F file=@", "input": 0 },
+				{ "prefix": "-F otherFile=@", "input": 1 },
+				{ "prefix": "-F oneMore=@", "input": 2 },
+				{ "escape": server.url( uploadTo ) }
+			] );
+
+		shell.execute( context, function ( err, result ) {
+			if ( err ) throw err;
+			var output = context.stdout;
+			try {
+				output = JSON.parse( output )
+			} catch ( e ) {
+				console.log( "shell", context.shell );
+				console.log( "out", output );
+				throw new Error( 'Not json from curl' );
+			}
+
+			var files = output.files;
+
+			assert.equal( server.url( '/post/foo'), files[0].url );
+			assert.equal( server.url( '/post/foo1'), files[1].url );
+			assert.equal( server.url( '/post/foo2'), files[2].url );
+			
+			cb();
+		});
+	});
 
 	after( function ( cb ) {
 		router.close( cb );
