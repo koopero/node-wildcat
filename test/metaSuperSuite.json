@@ -1,0 +1,16 @@
+[
+	{ 
+		"name": "Animated gif (galaxies collide)",
+		"url": "http://i.imgur.com/rY1Ld.gif.png",
+		"meta": {
+			"content-type": "image/gif",
+			"animation-frames": 46,
+			"image-width": 500,
+			"image-height": 281
+		}
+	},
+	{
+		"name": "Generic TIFF",
+		"url": "http://www.yolinux.com/MIME-EXAMPLES/yolinux-mime-test.tiff"
+	}
+]

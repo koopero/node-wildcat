@@ -18,6 +18,7 @@ convert -size 100x300 gradient:'#FFF-#0FF' -rotate 90 \
           -rotate 90 -set colorspace HSB -colorspace RGB \
           PNG:png
 
+convert png PCX:"pcx with spaces"
 convert png GIF:gif
 convert png JPEG:jpeg
 convert png TGA:targa
