@@ -11,26 +11,15 @@ module.exports = function(grunt) {
 	pkg = grunt.file.readJSON('package.json');
 
 	config = {
-		banner : [
-			'/**\n',
-			' * <%= pkg.name %> v<%= pkg.version %> - <%= grunt.template.today("yyyy-mm-dd") %>\n',
-			' * <%= pkg.description %>\n',
-			' *\n',
-			' * Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %>\n',
-			' * Licensed <%= pkg.license %>\n',
-			' */\n',
-		].join(''),
-
 		tests : [
 			'./test/mocha-Path.js',
 			'./test/mocha-Utils.js',
 			'./test/mocha-Storage.js',
 			'./test/mocha-Server.js',
 			'./test/mocha-HTTP.js',
+			'./test/mocha-Meta.js',
 			'./test/mocha-Builder.js'
-		],
-
-		pkg : pkg
+		]
 	};
 
 	// Project configuration.
@@ -43,10 +32,17 @@ module.exports = function(grunt) {
 				ui: 'bdd'
 			},
 			all: { src: config.tests }
+		},
+		markdox: {
+			fs: {
+				src: 'lib/Storage/Filesystem.js',
+				dest: 'docs/Filesystem.md'
+			}
 		}
 	});
 
 	grunt.loadNpmTasks('grunt-simple-mocha');
+	grunt.loadNpmTasks('grunt-markdox');
 
 	// Default task.
 	grunt.registerTask('default', ['simplemocha']);
