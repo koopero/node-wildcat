@@ -3,24 +3,15 @@
 // Credit to dancek (http://unix.stackexchange.com/a/65295) for shebang!
 
 var _ = require('underscore'),
-	async = require('async');
-
-
-
-
-
-
-
-var 
+	async = require('async'),
 	extend = require('extend'),
 	Wildcat = require('../lib/Wildcat.js'),
-	HTTP = require('../lib/Storage/HTTP.js');
-
-
+	HTTP = require('../lib/Storage/HTTP.js'),
+	Preset = require('../lib/Preset.js');
 
 
 var commands,
-	url,
+	urls,
 	options = {},
 	config,
 	workDir, lastDir,
@@ -30,6 +21,7 @@ async.series( [
 	parseArguments,
 	loadConfig,
 	alterConfig,
+	loadPresets,
 	listenForKill,
 	changeDir,
 	initRouter,
@@ -37,10 +29,7 @@ async.series( [
 	waitForCompletion,
 	shutdown
 ], function ( err ) {
-	if ( err ) {
-		console.log("err", err);
-	}
-	
+	console.warn("err", err );
 })
 
 
@@ -51,24 +40,24 @@ function parseArguments ( cb ) {
 		.describe('u', "URL")
 		.alias('l', 'local')
 		.describe( 'l', 'Local path')
+		.alias('s', 'server')
+		.alias('p', 'preset')
+		.alias('w', 'worker')
 		.argv;
 
 
-	var validCommands = ['init','server','worker','mirror'];
-	var args = [];
+	if ( argv.server ) {
+		commands = commands || {};
+		commands.server = true;
+	}
 
+	if ( argv.worker ) {
+		commands = commands || {};
+		commands.worker = true;
+	}
 
-	argv._.forEach ( function ( arg ) {
-		if ( validCommands.indexOf ( arg ) != -1 ) {
-			commands = commands || {};
-			commands[ arg ] = true;
-		} else if ( !url) {
-			url = arg;
-		} else {
-			cb( "Too many arguments");
-			return;
-		}
-	});
+	urls = argv._;
+
 	extend ( options, argv );
 
 	cb();
@@ -76,16 +65,25 @@ function parseArguments ( cb ) {
 
 
 function loadConfig ( cb ) {
-	require('../lib/Config.js').loadFromUrl( url, function ( err, loaded ) {
-		if ( err ) {
-			cb( err );
-			return;
-		}
-		
-		config = loaded.config;
-		workDir = loaded.root;
+	if ( urls.length == 0 ) {
+		var defaultConfig = Preset('router/cwd');
+		config = defaultConfig;
 		cb();
-	} );
+	} else if ( urls.length == 1 ) {
+		require('../lib/Config.js').loadFromUrl( urls[0], function ( err, loaded ) {
+			if ( err ) {
+				cb( err );
+				return;
+			}
+			
+			config = loaded.config;
+			workDir = loaded.root;
+			cb();
+		} );		
+	} else {
+		cb( Cli.Errors.TooManyURLs() );
+	}
+
 }
 
 function alterConfig ( cb ) {
@@ -117,6 +115,24 @@ function alterConfig ( cb ) {
 	cb();
 }
 
+function loadPresets ( cb ) {
+	var presets = options.preset;
+	if ( !Array.isArray( presets ) )
+		presets = [ presets ];
+
+	try {
+		presets.map( function( preset ) {
+			Preset.extend ( config, Preset( preset ) );
+		});
+
+	} catch ( err ) {
+		cb( err );
+		return;
+	}
+
+	cb();
+}
+
 function listenForKill ( cb ) {
 	var killed = false;
 	process.on( 'SIGINT', function() {
@@ -142,7 +158,7 @@ function changeDir ( cb ) {
 }
 
 function initRouter ( cb ) {
-	//console.log( JSON.stringify( config, null, ' ' ) );
+	console.log( JSON.stringify( config, null, '  ' ) );
 	router = new Wildcat.Router( config );
 	router.init( function ( err ) {
 		cb ( err );
@@ -166,7 +182,7 @@ function waitForCompletion ( cb ) {
 
 
 function shutdown () {
-	console.log("shutting down");
+	//console.warn("shutting down");
 
 	if ( lastDir ) {
 		process.chdir( lastDir );
@@ -179,54 +195,6 @@ function shutdown () {
 		router = null;
 	}
 } 
-
-
-
-
-
-return;
-
-
-
-
-console.log( argv );
-
-
-command = argv._[0];
-
-switch ( command ) {
-	case 'mirror':
-		config.storage.url = argv.url;
-		config.storage.localPath = argv.local;
-	break;
-
-	case 'serve':
-		config.storage.localPath = argv.local || '.';
-		config.server = {
-			listen: argv.url
-		}
-	break;
-
-	case 'build':
-		config.storage.localPath = argv.local ? argv.local : '.';
-		config.storage.touch = true;
-		config.worker = {
-
-		}
-	break;
-
-	case 'init':
-		config.storage.localPath = argv.local || '.';
-	break;
-}
-
-if ( argv.watch ) {
-	config.storage.watch = true;
-} 
-
-
-
-
 
 
 

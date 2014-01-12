@@ -1,0 +1,9 @@
+
+{
+	"streams": {
+
+	},
+	"storage": {
+		"localPath": "."
+	}
+}
