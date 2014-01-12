@@ -1,4 +1,10 @@
-Wildcat is under construction
-=============================
+# Under Construction
+`Wildcat` is under development. It should be ready soon. 
 
-Posted to reserve my place in the npm namespace.
+
+# Installation
+In an ideal world, installation should be as simple as:
+
+	npm install -g wildcat
+	sudo wildcat-install
+
