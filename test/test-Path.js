@@ -5,7 +5,6 @@ var assert = require('assert');
 describe('Path', function() {
 
 	it('should translate',function(){
-		var p = Path('**/*.jpg');
 		assert.equal(
 			Path.translate( 'foo.txt', '**/*.txt', '**/*.json' ),
 			'foo.json'
@@ -20,6 +19,6 @@ describe('Path', function() {
 	it('should match', function () {
 		assert( Path('/meta/**/*.meta.json').match( '/meta/file.jpg.meta.json' ) );
 		assert( Path('/meta/**/*.meta.json').match( '/meta/dir/file.jpg.meta.json' ) );
-			
+		assert( Path( '/upload/**').match( '/upload/file.ext') );
 	});
 });
