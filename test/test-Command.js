@@ -2,16 +2,16 @@ var
 	assert = require('assert');
 
 var
-	Builder = require('../lib/Builder.js'),
+	Command = require('../lib/Command.js'),
 	Context = require('../lib/Context.js'),
 	Test = require('./Test.js');
 
 
-describe( "Builder", function () {
+describe( "Command", function () {
 	var scratch;
 
 	before( function ( cb ) {
-		Test.CloneTestDataStorage( "mocha-Builder", function ( err, storage ) {
+		Test.CloneTestDataStorage( "mocha-Command", function ( err, storage ) {
 			if ( err ) throw err;
 			scratch = storage;
 			cb();
@@ -23,11 +23,9 @@ describe( "Builder", function () {
 			stdout: true
 		});
 
-		var builder = Builder({
-			shell: [ { tool: 'pwd'} ]
-		});
+		var command = Command([ { tool: 'pwd'} ]);
 
-		builder.execute( context, function ( err, result ) {
+		command.execute( context, function ( err, result ) {
 			assert.equal( context.stdout.trim(), process.cwd() );
 			cb();
 		});
@@ -45,20 +43,18 @@ describe( "Builder", function () {
 			outputs: [ toPBM ]
 		})
 
-		var builder = Builder( {
-			shell: [
-				{ tool: "convert" },
-				{ input: true },
-				{ 
-					output: true,
-					prefix: "PBM:" 
-				}
-			]
-		} );
+		var command = Command( [
+			{ tool: "convert" },
+			{ input: true },
+			{ 
+				output: true,
+				prefix: "PBM:" 
+			}
+		] );
 
 		context.mkdir( function ( err ) {
 			if ( err ) throw err;
-			builder.execute( context, function ( err, result ) {
+			command .execute( context, function ( err, result ) {
 				toPBM.getInfo ( function ( err, info ) {
 					if ( !info.exists ) {
 						cb( "Output doesn't exist" );
@@ -78,36 +74,24 @@ describe( "Builder", function () {
 		var wav = scratch.file( '/audio/silence.wav' ),
 			toFlac = scratch.file( '/converted/toFlac');
 
-
 		var context = Context( {
 			inputs: [ wav ],
 			outputs: [ toFlac ]
 		})
 
-		var builder = Builder( {
-			shell: [
-				{ tool: "ffmpeg" },
-				'-i',
-				{ input: true },
-				'-y',
-				'-f', 'flac',
-				'-acodec', 'flac',
-				{ output: true }
-			]
-		} );
-		/*
-		var check = Builder( {
-			{ tool: "file" },
-			"--mime",
-			"-b",
-			{ output: true },
-			">",
+		var command = Command( [
+			{ tool: "ffmpeg" },
+			'-i',
+			{ input: true },
+			'-y',
+			'-f', 'flac',
+			'-acodec', 'flac',
+			{ output: true }
+		] );
 
-		})
-		*/
 		context.mkdir( function ( err ) {
 			if ( err ) throw err;
-			builder.execute( context, function ( err, result ) {
+			command.execute( context, function ( err, result ) {
 				if ( err ) throw err;
 
 				toFlac.getInfo ( function ( err, info ) {
