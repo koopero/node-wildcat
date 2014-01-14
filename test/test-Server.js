@@ -28,7 +28,6 @@ describe( "Server", function () {
 				"storage": storage,
 				"streams": {
 					"original": {
-						"meta": "meta"
 					},
 					"meta": {
 						"input": "**/*",
@@ -234,9 +233,11 @@ describe( "Server", function () {
 		function onRequestComplete( err, status, header, content ) {
 			assert.equal( status, 400 );
 			assert.equal( header['content-type'], 'application/json' );
+
 			content = JSON.parse( content );
 			assert( content.error, "Error not in JSON" );
-			assert.equal( content.error.code, "LinkTargetNotFound" );
+
+			assert.equal( content.error.name, "LinkTargetNotFound" );
 			cb();
 		}
 	});
