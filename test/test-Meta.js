@@ -1,7 +1,7 @@
 var 
 	assert = require('assert'),
 	Meta  = require('../lib/Meta.js'),
-	Test = require('./Test.js'),
+	Test = require('./lib/Test.js'),
 	Utils = require('../lib/Utils.js');
 
 

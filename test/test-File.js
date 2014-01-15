@@ -4,7 +4,7 @@ var
 	Router = require('../lib/Router.js'),
 	Job = require('../lib/Job.js'),
 	Preset = require('../lib/Preset.js'),
-	Test = require('./Test.js');
+	Test = require('./lib/Test.js');
 
 describe( "File.build() without Worker", function () {
 	var router;

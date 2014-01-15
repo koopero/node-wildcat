@@ -4,12 +4,13 @@ var
 	http 	= require('http'),
 	fs 		= require('fs'),
 	pathlib = require('path'),
-	testDir = pathlib.resolve( __dirname );
+	testDir = pathlib.resolve( __dirname, '..' );
 
 var Test = exports;
 
 exports.path = function () {
 	var ret = testDir;
+
 	_.each( arguments, function ( path ) {
 		path = String( path );
 		ret = pathlib.join( ret, path );
@@ -72,7 +73,7 @@ exports.startsWith = function ( haystack, needle ) {
 }
 
 exports.TestDataStorage = function ( cb ) {
-	var storage = new (require( "../lib/Wildcat.js" ).Storage)( Test.path( 'data' ) );
+	var storage = new (require( "../../lib/Wildcat.js" ).Storage)( Test.path( 'data' ) );
 
 	storage.init ( function ( err ) {
 		if ( err ) throw err;
@@ -88,7 +89,7 @@ exports.CloneTestDataStorage = function ( name, cb ) {
 		var tempPath = 'tmp:'+exports.path( 'scratch/'+name ),
 			clone;
 
-		clone = new (require( "../lib/Wildcat.js" ).Storage)( tempPath );
+		clone = new (require( "../../lib/Wildcat.js" ).Storage)( tempPath );
 		clone.init( function ( err ) {
 			if ( err ) throw err;
 			clone.clone( testData, function ( err ) {

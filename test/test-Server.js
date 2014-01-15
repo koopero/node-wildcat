@@ -3,7 +3,7 @@ var
 	express = require('express'),
 	Context = require('../lib/Context.js'),
 	HTTP    = require('../lib/Storage/HTTP.js'),
-	Test 	= require('./Test.js'),
+	Test 	= require('./lib/Test.js'),
 	Shell 	= require('../lib/Command/Shell.js'),
 	Wildcat = require('../lib/Wildcat.js'),
 	async	= require('async');

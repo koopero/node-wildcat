@@ -4,7 +4,7 @@ var
 	async 	= require( 'async' ),
 	FileIterator = require('../lib/FileIterator'),
 	Wildcat = require( "../lib/Wildcat.js" ),
-	Test    = require( "./Test.js");
+	Test    = require( "./lib/Test.js");
 
 
 

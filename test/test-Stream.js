@@ -1,6 +1,6 @@
 var
 	assert = require('assert'),
-	Test = require('./Test.js'),
+	Test = require('./lib/Test.js'),
 	Router = require('../lib/Router.js');
 
 describe( "A pretty standard Router", function () {

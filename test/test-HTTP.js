@@ -3,7 +3,7 @@ var
 	express = require('express'),
 	urllib = require('url'),
 	HTTP = require('../lib/Storage/HTTP.js'),
-	Test = require('./Test.js'),
+	Test = require('./lib/Test.js'),
 	Wildcat = require('../lib/Wildcat.js');
 
 

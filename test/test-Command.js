@@ -4,7 +4,7 @@ var
 var
 	Command = require('../lib/Command.js'),
 	Context = require('../lib/Context.js'),
-	Test = require('./Test.js');
+	Test = require('./lib/Test.js');
 
 
 describe( "Command", function () {
