@@ -16,7 +16,7 @@ Get a `File` object for a system path.
 
 * **File** A File object for the path.
 
-## FileSystem.setDefaultTempDir(directory)
+## Filesystem.setDefaultTempDir(directory)
 
 Set the default temporary directory.
 

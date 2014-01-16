@@ -24,8 +24,6 @@ if [ `uname` == "Darwin" ]; then
 elif [ `uname` == "Linux" ]; then
 
 	if [ -f /etc/redhat-release ]; then
-		# Redhat
-
 		# EL6
 		echo "# Install EPEL for EL6"
 		echo "rpm -Uvh http://download.fedoraproject.org/pub/epel/6/i386/epel-release-6-8.noarch.rpm\n"
@@ -61,10 +59,14 @@ elif [ `uname` == "Linux" ]; then
 		EXIFTOOL="libimage-exiftool-perl"
 		MAGICK="ufraw imagemagick"
 
-		#Gentoo
-		#Silly thing builds everything from source, might take a while.
+		# Gentoo
+
 		UPDATE="emerge --sync"
+		
+		# Silly thing builds everything from source, might take a while.
 		INSTALL="emerge"
+		# Fuck, since need to include all the useful prerequisites for
+		# ffmpeg and Magick. That's a pain that ain't worth it.
 		MAGICK="ufraw imagemagick"
 		EXIFTOOL="exiftool"
 		FFMPEG="ffmpeg"
