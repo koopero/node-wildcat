@@ -258,6 +258,7 @@ describe( "Server", function () {
 
 		uploadTarga( function ( err, result ) {
 			if ( err ) throw err;
+			
 			var output = context.stdout;
 			try {
 				output = JSON.parse( output )

@@ -11,10 +11,10 @@ EASY="curl wget"
 
 if [ `uname` == "Darwin" ]; then
 	if [`which port`]; then
-		echo "# Trying to use MacPorts\n"
+		echo "# Trying to use MacPorts"
 	elif [`which brew`]; then
 		#Brew
-		echo "# Isn't Homebrew awesome?\n"
+		echo "# Isn't Homebrew awesome?"
 		INSTALL="brew install"
 		EXIFTOOL="exiftool"
 		MAGICK="libtiff ufraw imagemagick --libtiff"
@@ -26,10 +26,10 @@ elif [ `uname` == "Linux" ]; then
 	if [ -f /etc/redhat-release ]; then
 		# EL6
 		echo "# Install EPEL for EL6"
-		echo "rpm -Uvh http://download.fedoraproject.org/pub/epel/6/i386/epel-release-6-8.noarch.rpm\n"
+		echo "rpm -Uvh http://download.fedoraproject.org/pub/epel/6/i386/epel-release-6-8.noarch.rpm"
 
 		echo "# Install RPM fusion for EL6"
-		echo "yum -y localinstall --nogpgcheck http://download1.rpmfusion.org/free/el/updates/6/i386/rpmfusion-free-release-6-1.noarch.rpm http://download1.rpmfusion.org/nonfree/el/updates/6/i386/rpmfusion-nonfree-release-6-1.noarch.rpm\n"
+		echo "yum -y localinstall --nogpgcheck http://download1.rpmfusion.org/free/el/updates/6/i386/rpmfusion-free-release-6-1.noarch.rpm http://download1.rpmfusion.org/nonfree/el/updates/6/i386/rpmfusion-nonfree-release-6-1.noarch.rpm"
 
 		INSTALL="yum -y install"
 		EXIFTOOL="perl-Image-ExifTool"

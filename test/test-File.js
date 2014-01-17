@@ -38,6 +38,24 @@ describe( "File.build() without Worker", function () {
 		});
 	});
 
+	it('should check if a job is ready', function ( cb ) {
+		var jpeg = router.file('image/jpeg'),
+			meta = jpeg.relative('meta'),
+			opt = { check: true };
+
+		meta.build( opt, function ( err, result ) {
+			if ( err ) {
+				console.log ( 'check error', err );
+				throw err;
+			}
+
+			assert( result.check );
+			assert( !result.complete, "result says complete without building" );
+
+			cb();
+		});
+	});
+
 	it('should build meta for a jpg', function ( cb ) {
 		var jpeg = router.file('image/jpeg'),
 			meta = jpeg.relative('meta'),
@@ -94,7 +112,7 @@ describe( "File.build() with Worker", function () {
 
 	it('should initialize the router', function ( cb ) {
 
-		Test.CloneTestDataStorage( "test-File", function ( err, clonedStorage ) {
+		Test.CloneTestDataStorage( "test-FileWithWorker", function ( err, clonedStorage ) {
 			storage = clonedStorage;
 			var config = Preset( 'test/standardRouter', { "storage": storage, "worker": true } );
 
@@ -120,6 +138,26 @@ describe( "File.build() with Worker", function () {
 			cb();
 		});
 	});
+
+	it('should check if a job is ready', function ( cb ) {
+		var jpeg = router.file('image/jpeg'),
+			meta = jpeg.relative('meta'),
+			opt = { check: true };
+
+		meta.build( opt, function ( err, result ) {
+			if ( err ) {
+				console.log ( 'check error', err );
+				throw err;
+			}
+
+			assert( result.check );
+			assert( !result.complete );
+
+			cb();
+		});
+	});
+
+
 
 	it('should build meta for a jpg', function ( cb ) {
 		var jpeg = router.file('image/jpeg'),
