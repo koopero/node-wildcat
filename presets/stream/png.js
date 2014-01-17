@@ -1,6 +1,6 @@
 Preset.FileStream( function ( opt ) {
 	return {
-		"name": "jpeg",
+		"name": "png",
 		"if": {
 			"meta": {
 				"type": "image"
@@ -13,8 +13,7 @@ Preset.FileStream( function ( opt ) {
 		}, 
 		"build": {
 			"ifMeta": {
-				subtype: "jpeg",
-
+				subtype: "png"
 			},
 			"then": {
 				link: true
@@ -29,7 +28,7 @@ Preset.FileStream( function ( opt ) {
 				},
 				'-delete 1--1',
 				{
-					"prefix": "JPG:",
+					"prefix": "PNG:",
 					output: true
 				}
 			]

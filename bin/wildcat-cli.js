@@ -7,6 +7,7 @@ var _ = require('underscore'),
 	extend = require('extend'),
 	Wildcat = require('../lib/Wildcat.js'),
 	HTTP = require('../lib/Storage/HTTP.js'),
+	Filesystem = require('../lib/Storage/Filesystem.js'),
 	Preset = require('../lib/Preset.js');
 
 
@@ -43,6 +44,8 @@ function parseArguments ( cb ) {
 		.alias('s', 'server')
 		.alias('p', 'preset')
 		.alias('w', 'worker')
+		.alias('t', 'tmp')
+		.describe( 't', 'Use tempdir')
 		.argv;
 
 
@@ -111,6 +114,10 @@ function alterConfig ( cb ) {
 		config.server = null;
 	}
 
+	if ( options.tmp ) {
+		Filesystem.setTempDir( options.tmp );
+	}
+
 
 	cb();
 }
@@ -122,7 +129,7 @@ function loadPresets ( cb ) {
 
 	try {
 		presets.map( function( preset ) {
-			Preset.extend ( config, Preset( preset ) );
+			config = extend ( true, config, Preset( preset ) );
 		});
 
 	} catch ( err ) {
