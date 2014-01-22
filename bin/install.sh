@@ -10,15 +10,20 @@ echo "#"
 EASY="curl wget"
 
 if [ `uname` == "Darwin" ]; then
-	if [`which port`]; then
-		echo "# Trying to use MacPorts"
-	elif [`which brew`]; then
+
+	if which -s brew; then
 		#Brew
 		echo "# Isn't Homebrew awesome?"
 		INSTALL="brew install"
 		EXIFTOOL="exiftool"
-		MAGICK="libtiff ufraw imagemagick --libtiff"
+		MAGICK="ufraw imagemagick --with-libtiff"
 		FFMPEG="ffmpeg qtfaststart"
+	elif which -s port; then
+		echo "# MacPorts support not implemented. Homebrew (http://brew.sh/) is way better."
+		exit 1
+	else 
+		echo "# Homebrew (http://brew.sh/) is required."
+		exit 1		
 	fi
 
 elif [ `uname` == "Linux" ]; then
