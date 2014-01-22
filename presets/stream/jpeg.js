@@ -11,6 +11,7 @@ Preset.FileStream( function ( opt ) {
 				"identify": true
 			}
 		}, 
+		"excludeInputs": [ '/_**' ],
 		"build": {
 			"ifMeta": {
 				subtype: "jpeg",

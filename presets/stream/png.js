@@ -10,7 +10,8 @@ Preset.FileStream( function ( opt ) {
 				"magic": true,
 				"identify": true
 			}
-		}, 
+		},
+		"excludeInputs": [ '/_**' ],
 		"build": {
 			"ifMeta": {
 				subtype: "png"
