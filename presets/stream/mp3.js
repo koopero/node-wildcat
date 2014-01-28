@@ -3,7 +3,7 @@ Preset.FileStream( {
 	"if": {
 		"meta": { "type": "audio" },
 		"defaults": false,
-		"magic": true
+		"magic": true,
 		"ffprobe": true
 	},
 	"build": {

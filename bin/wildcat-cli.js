@@ -7,6 +7,7 @@ var _ = require('underscore'),
 	extend = require('extend'),
 	Wildcat = require('../lib/Wildcat.js'),
 	HTTP = require('../lib/Storage/HTTP.js'),
+	Log = require('../lib/Log.js'),
 	Filesystem = require('../lib/Storage/Filesystem.js'),
 	Preset = require('../lib/Preset.js');
 
@@ -42,6 +43,7 @@ function parseArguments ( cb ) {
 		.alias('l', 'local')
 		.describe( 'l', 'Local path')
 		.alias('s', 'server')
+		.boolean(['s','w'] )
 		.alias('p', 'preset')
 		.alias('w', 'worker')
 		.alias('t', 'tmp')
@@ -78,7 +80,8 @@ function loadConfig ( cb ) {
 				cb( err );
 				return;
 			}
-			
+
+
 			config = loaded.config;
 			workDir = loaded.root;
 			cb();
@@ -156,8 +159,9 @@ function listenForKill ( cb ) {
 }
 
 function changeDir ( cb ) {
+
 	if ( workDir && workDir != process.cwd() ) {
-		//console.log ( "Entering", workDir );
+		//Log ( "cli.changeDir", workDir );
 		lastDir = process.cwd();
 		process.chdir( workDir );
 	}
@@ -165,10 +169,16 @@ function changeDir ( cb ) {
 }
 
 function initRouter ( cb ) {
-	console.log( JSON.stringify( config, null, '  ' ) );
+	//console.log( JSON.stringify( config, null, '  ' ) );
 	router = new Wildcat.Router( config );
 	router.init( function ( err ) {
-		cb ( err );
+		if ( err ) {
+			cb ( err );
+		} else {
+			//var finalConfig = router.publicConfig();
+			//console.log( JSON.stringify( finalConfig, null, '  ') );
+			cb();
+		}
 	});
 }
 
