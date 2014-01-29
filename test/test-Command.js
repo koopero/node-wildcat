@@ -31,7 +31,7 @@ describe( "Command", function () {
 		});
 	});
 
-	it('will convert an image convert using ImageMagick', function ( cb ) {
+	it('will convert an image using ImageMagick', function ( cb ) {
 		this.timeout(5000);
 
 		var gif = scratch.file( '/image/gif' ),
