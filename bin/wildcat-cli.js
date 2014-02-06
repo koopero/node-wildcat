@@ -175,8 +175,8 @@ function initRouter ( cb ) {
 		if ( err ) {
 			cb ( err );
 		} else {
-			//var finalConfig = router.publicConfig();
-			//console.log( JSON.stringify( finalConfig, null, '  ') );
+			var finalConfig = router.publicConfig();
+			console.log( JSON.stringify( finalConfig, null, '  ') );
 			cb();
 		}
 	});

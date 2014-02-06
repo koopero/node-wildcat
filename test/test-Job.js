@@ -13,13 +13,11 @@ describe( "Do some Preset jobs on data", function () {
 
 		Test.CloneTestDataStorage( "test-Job", function ( err, clonedStorage ) {
 			storage = clonedStorage;
-			var config = Preset( 
+			var config = Preset(
 				"stream/jpeg",
 				"test/data",
 				{ "storage": storage } 
 			);
-
-//			console.log( "config", JSON.stringify( config, null, 2 ) );
 
 			router = new Router( config );
 			router.init( function ( err ) {

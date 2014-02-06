@@ -331,6 +331,8 @@ describe( "Server", function () {
 
 			var files = output.files;
 
+			console.log( 'test-Server', output );
+
 			assert.equal( server.url( '/post/foo'), files[0].url );
 			assert.equal( server.url( '/post/foo1'), files[1].url );
 			assert.equal( server.url( '/post/foo2'), files[2].url );

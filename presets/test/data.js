@@ -1,7 +1,7 @@
 {
 	streams: {
 		data: {
-			"path": "**"
+			"path": "**/*"
 		}
 	}
 }
