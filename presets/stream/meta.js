@@ -1,7 +1,8 @@
 Preset.FileStream( {
 	"name": "meta",
 	"priority": -1,
-	"metaFor": true,
+	"tag": "meta",
+	"cascade": true,
 	"build": [
 		{"tool":"wildcat-meta"},
 		{"input": true },
