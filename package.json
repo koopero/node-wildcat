@@ -1,7 +1,7 @@
 {
   "name": "wildcat",
   "description": "Media transmutation and sharing server",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "homepage": "https://github.com/koopero/node-wildcat",
   "author": {
     "name": "koopero",
@@ -23,17 +23,18 @@
   "keywords": [],
   "dependencies": {
     "optimist": "0.6.0",
-    "async":    "0.2.9",
+    "async": "0.2.9",
     "cli-color": ">=0.2.3",
-    "express":  "3.4.6",
-    "extend":   "1.2.1",
+    "express": "3.4.6",
+    "extend": "1.2.1",
     "formidable": "1.0.14",
     "fs.extra": "1.2.1",
-    "mkdirp":   "0.3.5",
-    "mmmagic":  "0.3.5",
-    "rimraf":   "2.2.4",
-    "temp":     "0.6.0",
-    "underscore":"1.5.2"
+    "mkdirp": "0.3.5",
+    "mmmagic": "0.3.5",
+    "rimraf": "2.2.4",
+    "temp": "0.6.0",
+    "underscore": "1.5.2",
+    "streamifier": "~0.1.0"
   },
   "devDependencies": {
     "grunt": "0.4.x",

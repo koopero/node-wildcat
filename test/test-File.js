@@ -40,7 +40,7 @@ describe( "File.build() without Worker", function () {
 
 	it('should check if a job is ready', function ( cb ) {
 		var jpeg = router.file('image/jpeg'),
-			meta = jpeg.relative('meta'),
+			meta = jpeg.relative( { tag: 'meta' } ),
 			opt = { check: true };
 
 		meta.build( opt, function ( err, result ) {
@@ -58,7 +58,7 @@ describe( "File.build() without Worker", function () {
 
 	it('should build meta for a jpg', function ( cb ) {
 		var jpeg = router.file('image/jpeg'),
-			meta = jpeg.relative('meta'),
+			meta = jpeg.relative({ tag: 'meta' }),
 			opt = {};
 
 		meta.build( opt, function ( err, result ) {
@@ -66,7 +66,6 @@ describe( "File.build() without Worker", function () {
 				console.log ( 'build error', err );
 				throw err;
 			}
-
 			meta.readData( function ( err, data ) {
 				if ( err ) throw err;
 
@@ -80,7 +79,7 @@ describe( "File.build() without Worker", function () {
 
 	it('should return an appropriate result when the file has already been built', function ( cb ) {
 		var jpeg = router.file('image/jpeg'),
-			meta = jpeg.relative('meta'),
+			meta = jpeg.relative({ tag: 'meta' }),
 			opt = {};
 
 		meta.build( opt, function ( err, result ) {
@@ -91,7 +90,7 @@ describe( "File.build() without Worker", function () {
 
 	it('should fail to build an impossible file', function ( cb ) {
 		var notARealFile = router.file('not/a/real/file'),
-			meta = notARealFile.relative('meta'),
+			meta = notARealFile.relative({ tag: 'meta' }),
 			opt = {};
 
 		meta.build( opt, function ( err, result ) {
@@ -141,7 +140,7 @@ describe( "File.build() with Worker", function () {
 
 	it('should check if a job is ready', function ( cb ) {
 		var jpeg = router.file('image/jpeg'),
-			meta = jpeg.relative('meta'),
+			meta = jpeg.relative({ tag: 'meta' }),
 			opt = { check: true };
 
 		meta.build( opt, function ( err, result ) {
@@ -161,7 +160,7 @@ describe( "File.build() with Worker", function () {
 
 	it('should build meta for a jpg', function ( cb ) {
 		var jpeg = router.file('image/jpeg'),
-			meta = jpeg.relative('meta'),
+			meta = jpeg.relative({ tag: 'meta' }),
 			opt = {};
 
 		meta.build( opt, function ( err, result ) {
@@ -183,7 +182,7 @@ describe( "File.build() with Worker", function () {
 
 	it('should return an appropriate result when the file has already been built', function ( cb ) {
 		var jpeg = router.file('image/jpeg'),
-			meta = jpeg.relative('meta'),
+			meta = jpeg.relative({ tag: 'meta' }),
 			opt = {};
 
 		meta.build( opt, function ( err, result ) {
@@ -194,7 +193,7 @@ describe( "File.build() with Worker", function () {
 
 	it('should fail to build an impossible file', function ( cb ) {
 		var notARealFile = router.file('not/a/real/file'),
-			meta = notARealFile.relative('meta'),
+			meta = notARealFile.relative({ tag: 'meta' }),
 			opt = {};
 
 		meta.build( opt, function ( err, result ) {

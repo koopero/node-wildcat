@@ -55,7 +55,7 @@ describe( "Command", function () {
 		context.mkdir( function ( err ) {
 			if ( err ) throw err;
 			command .execute( context, function ( err, result ) {
-				toPBM.getInfo ( function ( err, info ) {
+				toPBM.stat ( function ( err, info ) {
 					if ( !info.exists ) {
 						cb( "Output doesn't exist" );
 						return
@@ -94,7 +94,7 @@ describe( "Command", function () {
 			command.execute( context, function ( err, result ) {
 				if ( err ) throw err;
 
-				toFlac.getInfo ( function ( err, info ) {
+				toFlac.stat ( function ( err, info ) {
 					if ( !info.exists ) {
 						cb( "Output doesn't exist" );
 						return;

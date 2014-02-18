@@ -147,10 +147,11 @@ describe( "Server", function () {
 
 		function onRequestComplete ( err, status, header, content ) {
 			if ( err ) throw err;
+
 			assert.equal( status, 201, "Wrong status" );
 			assert( Array.isArray(content.files), "No files array" );
-			assert.equal( content.files[0].url, serverUrl+path );
-			assert.equal( content.files[0]['size'], data.length, "Size incorrect" );
+			assert.equal( content.files[0]['content-location'], serverUrl+path );
+			assert.equal( content.files[0]['content-length'], data.length, "Size incorrect" );
 
 			var wroteFile = storage.file( path );
 			wroteFile.readString ( function ( err, str ) {
@@ -182,9 +183,9 @@ describe( "Server", function () {
 
 		function onRequestComplete ( err, status, header, content ) {
 			var wroteFile = storage.file( path );
-			wroteFile.getInfo( function ( err, info ) {
+			wroteFile.stat( function ( err, stat ) {
 				if ( err ) throw err;
-				assert.equal( String(info.mtime), String(date) );
+				assert.equal( String(stat.mtime), String(date) );
 				cb();
 			});
 		}
@@ -207,9 +208,9 @@ describe( "Server", function () {
 
 		function onRequestComplete( err, status, header, content ) {
 			var wroteFile = storage.file( path );
-			wroteFile.getInfo( function ( err, info ) {
-				assert.equal( info.type, 'link', 'Link not created' );
-				assert.equal( info.linkPath, src, 'Link is wrong path' );
+			wroteFile.stat( function ( err, stat ) {
+				assert.equal( stat.type, 'link', 'Link not created' );
+				assert.equal( stat.linkPath, src, 'Link is wrong path' );
 				cb();
 			});
 		}
@@ -272,8 +273,8 @@ describe( "Server", function () {
 			//console.log( "out", output );
 
 			assert( Array.isArray( output.files ), "No files in response" );
-			assert.equal( output.files[0].url, server.url( expectPath ) );
-			var firstUrl = output.files[0].url;
+			assert.equal( output.files[0]['content-location'], server.url( expectPath ) );
+			var firstUrl = output.files[0]['content-location'];
 			
 
 			uploadTarga( function ( err, result ) {
@@ -288,7 +289,7 @@ describe( "Server", function () {
 				output = JSON.parse( output );
 
 				assert( Array.isArray( output.files ), "No files in second response" );
-				assert.notEqual( output.files[0].url, firstUrl );
+				assert.notEqual( output.files[0]['content-location'], firstUrl );
 
 				cb();
 			} );
@@ -320,6 +321,7 @@ describe( "Server", function () {
 
 		shell.execute( context, function ( err, result ) {
 			if ( err ) throw err;
+
 			var output = context.stdout;
 			try {
 				output = JSON.parse( output )
@@ -331,11 +333,9 @@ describe( "Server", function () {
 
 			var files = output.files;
 
-			console.log( 'test-Server', output );
-
-			assert.equal( server.url( '/post/foo'), files[0].url );
-			assert.equal( server.url( '/post/foo1'), files[1].url );
-			assert.equal( server.url( '/post/foo2'), files[2].url );
+			assert.equal( server.url( '/post/foo'), files[0]['content-location']);
+			assert.equal( server.url( '/post/foo1'), files[1]['content-location'] );
+			assert.equal( server.url( '/post/foo2'), files[2]['content-location']);
 			
 			cb();
 		});

@@ -5,7 +5,7 @@
 		},
 		meta: {
 			"input": "**/*",
-			"metaFor": "original",
+			"tag": "meta",
 			"path": "meta/**/*.meta.json",
 			"build": [
 				{"tool":"wildcat-meta"},

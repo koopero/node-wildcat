@@ -44,7 +44,7 @@ describe('Filesystem', function() {
 
 		it('should read a path mismatch', function ( cb ) {
 			var file = storage.file ('/emptyFile/');
-			file.getInfo( function ( err ) {
+			file.stat( function ( err ) {
 				if ( err ) throw err;
 				assert( String(file.path) == '/emptyFile', "Trailing slash not stripped" );
 				assert( file.isFile, "File not found under wrong path" );
@@ -65,7 +65,7 @@ describe('Filesystem', function() {
 
 		it('should read an internal link', function ( cb ) {
 			var link = storage.file ( '/link/toGif' );
-			link.getInfo( function ( err ) {
+			link.stat( function ( err ) {
 				assert( link.isLink, "Link is not a link");
 				assert.equal ( link.linkPath, '/image/gif' );
 				cb();
@@ -116,7 +116,7 @@ describe('Filesystem', function() {
 
 		it('should have properly cloned a link', function ( cb ) {
 			var link = storage.file ( '/link/toGif' );
-			link.getInfo( function ( err ) {
+			link.stat( function ( err ) {
 				assert( link.isLink, "Link is not a link");
 				assert.equal ( link.linkPath, '/image/gif' );
 				cb();
