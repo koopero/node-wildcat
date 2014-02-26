@@ -170,7 +170,7 @@ function changeDir ( cb ) {
 
 function initRouter ( cb ) {
 	//console.log( JSON.stringify( config, null, '  ' ) );
-	router = new Wildcat.Router( config );
+	router = new Wildcat( config );
 	router.init( function ( err ) {
 		if ( err ) {
 			cb ( err );
