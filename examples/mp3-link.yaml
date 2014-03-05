@@ -1,0 +1,30 @@
+#
+#	The following is an example of using Wildcat to create
+#	references ( symlinks ) to existing media rather than
+#	transcoding every file.
+#
+streams:
+	source:
+		path: "**/*"
+	mp3:
+		path: "/mp3/**.*"
+		input: "source"
+		if:
+			meta:
+				type: "audio"
+		build: 
+			ifMeta: 
+				subtype: ["mp3","mpeg"],
+				bitrate: { "$lt": "200kbps" }
+			then:
+				# This is it. One little directive will automatically
+				# create a link from the input file to the output file.
+				link: true
+			else:
+				# If the file doesn't match, here's the trancoding script
+				# to create a derived mp3 file.
+				{ tool: "ffmpeg" },
+				"-i", { input: true },
+				"-codec:a libmp3lame -qscale:a 3",
+				"-f mp3",
+				{ output: true }

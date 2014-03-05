@@ -1,0 +1,118 @@
+#
+# This following is a fairly robust script for building thumbnails
+# from image and video files. It looks complicated, but it supports
+# some of the following edge cases that can choke lesser thumbnail
+#   generators.
+#
+#   * Exif orientation in JPEG and video files.
+#   * Mis-named or invalid inputs.
+#   * Non-square pixel aspect ratios in video files.
+#   * Support for pretty much any image or video file.
+#
+streams:
+  source: 
+    path: "**/*"
+
+  thumbnail: 
+    path: "/_thumbnail/**/*"
+    input: "source"
+
+    # Here is the configuration that will be used for directives
+    # later in the script.
+    var: 
+      width: 320
+      height: 320
+      mode: "cover"
+      time: "10%"
+      timeMax: 10
+
+    # Since Wildcat makes no attempt ( at least in this example )
+    # to translate file extensions, it will produce some very
+    # mis-labeled files. The 'meta' configuration in the stream
+    # is used to supply proper headers when Wildcat is used as
+    # a server.
+    meta:
+      "content-type": "image/jpeg"
+
+    # The 'if' directive will limit processing to files whose
+    # metadata matches a query. In this case, only image and
+    # video files will be processed.
+    if: 
+      meta:
+        type: ["image","video"]
+
+    build:
+      # ifMeta allows there to be a seperate build script for
+      # image and video files. Any other file types will be
+      # ignored. Wildcat's built-in meta determination will
+      # identify at least 90% of files.
+      ifMeta:
+        type: "video"
+
+      # processing for video files.
+      then: [
+        # Resolve ffmpeg. Currently, this works the same way
+        # as unix PATH, but the tool directive is used for
+        # forward compatibility with specific or included
+        # version of tools.
+        { tool: "ffmpeg" },
+        # 
+        '-y',
+        # The metaArg: "ffSeek" directive will have its arguments
+        # 
+        { metaArg: "ffSeek" },
+        # The input directive will insert the path to the
+        # input file. Passing true will use the first input.
+        '-i',{ input: true },
+        '-vframes 1',
+        '-f image2',
+        # This temp directive will allocate a temporary file named
+        # 'InterImage.png' and insert its path in the command line.
+        { temp: "InterImage", "ext": "png" },
+        # 
+        "&&",
+        { tool: "convert" },
+        # This will insert the path to the previously created
+        # temp file.
+        { temp: "InterImage" },
+        # This directive will translate orientation information
+        # from the file's meta into an Image Magick argument
+        # to properly orient the file.
+        { metaArg: "magickOrientation" },
+        # The 'magickGeom' directive 
+        { metaArg: "magickGeom" },
+        # Finally, the file is output!
+        {
+          # Since the file extension of our output is likely
+          # to be something other than 'jpg', we use prefix
+          # to force Image Magick to make a jpeg file.
+          prefix: "JPG:",
+          output: true
+        }
+      ]
+      #
+      # processing for image files.
+      # 
+      else: [
+        { tool: "convert" },
+        {
+          input: true,
+          prefix: 
+            # This directive will prefix the input file
+            # with the appropriate Image Magick loader
+            { "metaArg": "magickPrefix" }
+        },
+        # This is required to only use the first frame of
+        # gifs or the first layer of PSDs.
+        '-delete 1--1',
+        # This directive will translate orientation information
+        # from the file's meta into an Image Magick argument
+        # to properly orient the file.
+        { metaArg: "magickOrientation" },
+        # The 'magickGeom' directive 
+        { metaArg: "magickGeom" },
+        {
+          "prefix": "JPG:",
+          output: true
+        }
+      ]

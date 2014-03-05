@@ -34,7 +34,8 @@
     "rimraf": "2.2.4",
     "temp": "0.6.0",
     "underscore": "1.5.2",
-    "streamifier": "~0.1.0"
+    "streamifier": "~0.1.0",
+    "js-yaml": "~3.0.2"
   },
   "devDependencies": {
     "grunt": "0.4.x",
