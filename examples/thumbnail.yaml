@@ -111,6 +111,7 @@ streams:
         { metaArg: "magickOrientation" },
         # The 'magickGeom' directive 
         { metaArg: "magickGeom" },
+        "-colorspace sRGB",
         {
           "prefix": "JPG:",
           output: true
