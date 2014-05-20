@@ -45,7 +45,7 @@ describe( "Server", function () {
 				}
 			}
 
-			router = new Wildcat.Router ( routerConfig );
+			router = new Wildcat( routerConfig );
 			router.init( function ( err ) {
 				if ( err ) {
 					cb( err );
@@ -148,10 +148,11 @@ describe( "Server", function () {
 		function onRequestComplete ( err, status, header, content ) {
 			if ( err ) throw err;
 
+			console.log( "onRequestComplete", content );
+
 			assert.equal( status, 201, "Wrong status" );
-			assert( Array.isArray(content.files), "No files array" );
-			assert.equal( content.files[0]['content-location'], serverUrl+path );
-			assert.equal( content.files[0]['content-length'], data.length, "Size incorrect" );
+			assert.equal( content['url'], serverUrl+path );
+			assert.equal( content['size'], data.length, "Size incorrect" );
 
 			var wroteFile = storage.file( path );
 			wroteFile.readString ( function ( err, str ) {

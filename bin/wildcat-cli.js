@@ -27,7 +27,7 @@ async.series( [
 	listenForKill,
 	changeDir,
 	initRouter,
-	touchFiles,
+	//touchFiles,
 	waitForCompletion,
 	shutdown
 ], function ( err ) {
@@ -40,14 +40,25 @@ function parseArguments ( cb ) {
 		.usage('Usage: $0')
 		.alias('u', 'url')
 		.describe('u', "URL")
+		
 		.alias('l', 'local')
 		.describe( 'l', 'Local path')
+		
 		.alias('s', 'server')
-		.boolean(['s','w'] )
-		.alias('p', 'preset')
+		.boolean('s')
+
 		.alias('w', 'worker')
+		.boolean('w')
 		.alias('t', 'tmp')
 		.describe( 't', 'Use tempdir')
+
+		.boolean('walk')
+		.describe('walk', 'Walk storage on init ( need to build files )' )
+		
+
+		.alias('p', 'preset')
+
+
 		.argv;
 
 
@@ -175,7 +186,7 @@ function initRouter ( cb ) {
 		if ( err ) {
 			cb ( err );
 		} else {
-			var finalConfig = router.publicConfig();
+			var finalConfig = router.configLocal();
 			console.log( JSON.stringify( finalConfig, null, '  ') );
 			cb();
 		}
@@ -199,8 +210,6 @@ function waitForCompletion ( cb ) {
 
 
 function shutdown () {
-	//console.warn("shutting down");
-
 	if ( lastDir ) {
 		process.chdir( lastDir );
 	}

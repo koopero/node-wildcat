@@ -3,6 +3,7 @@ var
 	Test = require('./lib/Test.js'),
 	Router = require('../lib/Router.js');
 
+if( false )
 describe( "A pretty standard Router", function () {
 	var router;
 
@@ -75,3 +76,4 @@ describe( "A pretty standard Router", function () {
 
 	});
 });
+
