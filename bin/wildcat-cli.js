@@ -27,7 +27,7 @@ async.series( [
 	listenForKill,
 	changeDir,
 	initRouter,
-	//touchFiles,
+	touchFiles,
 	waitForCompletion,
 	shutdown
 ], function ( err ) {
