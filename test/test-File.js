@@ -1,13 +1,226 @@
 var 
+	async = require('async'),
 	assert = require('assert'),
 	fs = require('fs'),
-	Router = require('../lib/Router.js'),
-	Job = require('../lib/Job.js'),
-	Preset = require('../lib/Preset.js'),
-	Test = require('./lib/Test.js');
+	Router = require('../lib/Router'),
+	Job = require('../lib/Job'),
+	Path = require( '../lib/Path'),
+	Preset = require('../lib/Preset'),
+	Test = require('./lib/Test');
 
 
 describe( "File", function () {
+
+	describe('#walk', function ( cb ) {
+		var router;
+		before( function ( cb ) {
+			var config = {
+				storage: 'tmp:/./scratch/test-File-walk',
+				streams: {
+					def: { path: "**" }
+				}
+			}
+
+			router = new Router( config );
+			router.init( function ( err ) {
+				if ( err ) {
+					throw new Error("Error initializing test router")
+					return;
+				};
+				cb();
+			});
+		} );
+
+		before( function ( cb ) {
+			var files = [
+				'/',
+				'/file1',
+				'/file2',
+				'/file3',
+				'/dir1/',
+				'/dir1/file1',
+				'/dir1/file2',
+				'/dir1/subdir1/',
+				'/dir1/subdir1/file1',
+				'/dir1/subdir1/file2',
+				'/dir1/subdir2/',
+				'/dir1/subdir2/file1',
+				'/dir1/subdir2/file2',
+				'/dir1/subdir2/file3',
+				'/dir2/',
+				'/dir2/file1',
+				'/dir2/file2',
+				'/dir3/'			
+			]
+
+			async.mapSeries( files, function ( path, cb ) {
+				path = Path( path );
+				var file = router.file( path );
+				if ( path.isDir ) {
+					file.mkdir( cb );
+				} else {
+					file.store( "This is the file at "+path, cb );
+				}
+			}, cb );
+
+		});
+
+		it("should work with default arguments", function ( cb ) {
+			var file = router.file('/');
+			var iter = file.walk( function ( err, result ) {
+				result = flattenWalkResult( result );
+				assert( !inArray ( result, '/' ), "default erroneously returning self" );
+				assert( compareArray ( result, [
+					'/file1',
+					'/file2',
+					'/file3',
+					'/dir1/',
+					'/dir1/file1',
+					'/dir1/file2',
+					'/dir1/subdir1/',
+					'/dir1/subdir1/file1',
+					'/dir1/subdir1/file2',
+					'/dir1/subdir2/',
+					'/dir1/subdir2/file1',
+					'/dir1/subdir2/file2',
+					'/dir1/subdir2/file3',
+					'/dir2/',
+					'/dir2/file1',
+					'/dir2/file2',
+					'/dir3/'						
+				]));
+				cb()
+			});
+
+			assert( iter instanceof require('../lib/FileIterator'), "return is not FileIterator" );
+		});
+
+		it("should exclude directories when asked", function ( cb ) {
+			var file = router.file('/');
+			var opt = {
+				dirs: false
+			}
+			var iter = file.walk( opt, function ( err, result ) {
+				result = flattenWalkResult( result );
+				assert( compareArray ( result, [
+					'/file1',
+					'/file2',
+					'/file3',
+					'/dir1/file1',
+					'/dir1/file2',
+					'/dir1/subdir1/file1',
+					'/dir1/subdir1/file2',
+					'/dir1/subdir2/file1',
+					'/dir1/subdir2/file2',
+					'/dir1/subdir2/file3',
+					'/dir2/file1',
+					'/dir2/file2'
+				]));
+				cb()
+			});
+		});
+
+		it("should exclude files when asked", function ( cb ) {
+			var opt = {
+				files: false
+			}
+
+			var file = router.file('/');
+			var iter = file.walk( opt, function ( err, result ) {
+				result = flattenWalkResult( result );
+				assert( compareArray ( result, [
+					'/dir1/',
+					'/dir1/subdir1/',
+					'/dir1/subdir2/',
+					'/dir2/',
+					'/dir3/'	
+				]));
+				cb()
+			});
+		});
+
+		it("should limit to a depth of 1", function ( cb ) {
+			var opt = {
+				depth: 1
+			}
+
+			var file = router.file('/');
+			var iter = file.walk( opt, function ( err, result ) {
+				result = flattenWalkResult( result );
+				assert( compareArray ( result, [
+					'/file1',
+					'/file2',
+					'/file3',
+					'/dir1/',
+					'/dir2/',
+					'/dir3/'						
+				]));
+				cb()
+			});
+		});
+
+		it("should limit to a depth of 2", function ( cb ) {
+			var opt = {
+				depth: 2
+			}
+
+			var file = router.file('/');
+			var iter = file.walk( opt, function ( err, result ) {
+				result = flattenWalkResult( result );
+				assert( compareArray ( result, [
+					'/file1',
+					'/file2',
+					'/file3',
+					'/dir1/',
+					'/dir1/file1',
+					'/dir1/file2',
+					'/dir1/subdir1/',
+					'/dir1/subdir2/',
+					'/dir2/',
+					'/dir2/file1',
+					'/dir2/file2',
+					'/dir3/'						
+				]));
+				cb()
+			});
+		});
+
+
+
+		after( function ( cb ) {
+			router.close( cb );
+		})
+
+		function compareArray( arr1, arr2 ) {
+			if ( arr1.length != arr2.length )
+				return false;
+
+			for ( var i = 0; i < arr1.length; i ++ )
+				if ( arr2.indexOf( arr1[i] ) == -1 )
+					return false;
+
+			 for ( var i = 0; i < arr1.length; i ++ )
+				if ( arr1.indexOf( arr2[i] ) == -1 )
+					return false;
+
+			return true;
+		}
+
+		function inArray ( haystack, needle ) {
+			return haystack.indexOf( needle ) != -1;
+		}
+
+		function flattenWalkResult ( result ) {
+			return result.map( function ( file ) {
+				return String( file.path );
+			});
+		}
+
+	});
+
+	return;
+
+
 	describe( "#relatives", function () {
 		var router;
 
@@ -327,6 +540,12 @@ describe( "File", function () {
 		
 
 	});
+
+
+
+
+
+
 });
 
 
